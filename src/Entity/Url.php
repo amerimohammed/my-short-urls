@@ -25,6 +25,9 @@ class Url
     #[ORM\Column(nullable: true)]
     private ?int $visitedTimes = null;
 
+    #[ORM\ManyToOne]
+    private ?User $owner = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -62,6 +65,18 @@ class Url
     public function setVisitedTimes(?int $visitedTimes): static
     {
         $this->visitedTimes = $visitedTimes;
+
+        return $this;
+    }
+
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?User $owner): static
+    {
+        $this->owner = $owner;
 
         return $this;
     }

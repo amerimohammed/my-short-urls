@@ -20,12 +20,18 @@
 
     <div class="navbar" id="navbarNav">
       <ul class="navbar-nav">
+      {% if app.user %}
+        <li class="nav-item">
+          <a class="nav-link" href="/logout">logout</a>
+        </li>
+      {% else %}
       <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="/register">Register</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/login">Login</a>
         </li>
+      {% endif %}
       </ul>
     </div>
   </div>

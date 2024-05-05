@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 #[Route('/url')]
 class UrlController extends AbstractController
@@ -23,15 +24,15 @@ class UrlController extends AbstractController
     }
 
     #[Route('/', name: 'app_url_index', methods:['GET'])]
-    public function index(): Response
+    public function index(#[CurrentUser] User $currentUser): Response
     {
         return $this->render('url/index.html.twig', [
-          'urls' => $this->urlRepository->findAll()  
+          'urls' => $this->urlRepository->findBy(['owner' => $currentUser])  
         ]);
     }
 
     #[Route('/new', name:'app_url_new', methods:['GET', 'POST'])]
-    public function new(Request $request) : Response
+    public function new(Request $request, #[CurrentUser] User $currentUser) : Response
     {   
         $url = new Url();
         $form = $this->createForm(UrlFormType::class, $url);
@@ -40,6 +41,7 @@ class UrlController extends AbstractController
         if($form->isSubmitted() && $form->isValid()) {
             $url->setShortUrl(uniqid());
             $url->setVisitedTimes(0);
+            $url->setOwner($currentUser);
             $this->entityManager->persist($url);
             $this->entityManager->flush();
             return $this->redirectToRoute('app_url_index');
@@ -51,9 +53,9 @@ class UrlController extends AbstractController
     }
 
     #[Route('/edit/{shortUrl}', name:'app_url_edit', methods:['GET', 'POST'])]
-    public function edit($shortUrl, Request $request) : Response
+    public function edit($shortUrl, Request $request, #[CurrentUser] User $currentUser) : Response
     {   
-        $url = $this->urlRepository->findOneBy(['shortUrl' => $shortUrl]);
+        $url = $this->urlRepository->findOneBy(['shortUrl' => $shortUrl, 'owner' => $currentUser]);
 
         if($url ) {
             $form = $this->createForm(UrlFormType::class, $url);
@@ -73,9 +75,9 @@ class UrlController extends AbstractController
     }
 
     #[Route('/delete/{shortUrl}', name:'app_url_delete', methods:['POST'])]
-    public function delete($shortUrl, Request $request) : Response
+    public function delete($shortUrl, Request $request, #[CurrentUser] User $currentUser) : Response
     {   
-        $url = $this->urlRepository->findOneBy(['shortUrl' => $shortUrl]);
+        $url = $this->urlRepository->findOneBy(['shortUrl' => $shortUrl, 'owner'=> $currentUser]);
 
         if($url) {
             if ($this->isCsrfTokenValid('delete'.$url->getShortUrl(), $request->request->get('_token'))) {
