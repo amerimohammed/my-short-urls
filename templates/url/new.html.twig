@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New short url{% endblock %}
+
+{% block body %}
+    <h1 class="text-center">New short url</h1>
+    <div class="my-3 d-flex justify-content-center">
+        <div class="w-100 mw-700">
+            {{ form_start(form) }}
+                {{ form_widget(form) }}
+                <div class="my-2 d-flex justify-content-center">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            {{ form_end(form) }}
+        </div>
+        
+    </div>
+{% endblock %}

@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\UrlRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UrlRepository::class)]
 class Url
@@ -14,6 +15,8 @@ class Url
     private ?int $id = null;
 
     #[ORM\Column(length: 500)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 10)]
     private ?string $longUrl = null;
 
     #[ORM\Column(length: 50)]
